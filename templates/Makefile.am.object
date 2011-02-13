@@ -1,0 +1,23 @@
+BUILT_SOURCES = $$OBJECT_L$$-object.h $$OBJECT_L$$-object.c \
+		dbus-glue.h dbus-marshal.h dbus-marshal.c
+
+noinst_LTLIBRARIES = lib$$OBJECT_L$$.la
+
+lib$$OBJECT_L$$_la_SOURCES = dbus-iface.h $$IFACE_FILES$$
+nodist_lib$$OBJECT_L$$_la_SOURCES = $(BUILT_SOURCES)
+lib$$OBJECT_L$$_la_CFLAGS = @DBUS_GLIB_CFLAGS@ -Wall -Werror
+
+$$OBJECT_L$$-object.h $$OBJECT_L$$-object.c: $$OBJECT_L$$.gob
+	gob2 $<
+
+dbus-glue.h: iface.xml
+	dbus-binding-tool --prefix=$$OBJECT_L$$ --mode=glib-server $< > $@
+
+dbus-marshal.h: marshal.list
+	glib-genmarshal --prefix=dbus_marshal --header $< > $@
+
+dbus-marshal.c: marshal.list
+	glib-genmarshal --prefix=dbus_marshal --body $< > $@
+
+EXTRA_DIST = $$OBJECT_L$$.gob iface.xml marshal.list
+CLEANFILES = $(BUILT_SOURCES)

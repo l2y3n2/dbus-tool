@@ -1,0 +1,14 @@
+SUBDIRS = $$SUBDIRS$$
+
+dbusconfdir = $(sysconfdir)/dbus-1/system.d
+dbusconf_DATA = $$PACKAGE$$.conf
+
+servicedir = $(datadir)/dbus-1/system-services
+service_DATA = $$SERVICE$$.service
+
+bin_PROGRAMS = $$PACKAGE$$-daemon
+$$PACKAGE$$_daemon_SOURCES = main.c
+$$PACKAGE$$_daemon_CFLAGS = @DBUS_GLIB_CFLAGS@ -Wall -Werror
+$$PACKAGE$$_daemon_LDADD = @DBUS_GLIB_LIBS@ $$OBJECT_LIBS$$
+
+EXTRA_DIST = $(dbusconf_DATA)

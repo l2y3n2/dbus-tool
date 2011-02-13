@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project>
+    <name>test</name>
+    <service>
+        <name>com.newlandcomputer.Test</name>
+        <type>system</type>
+    </service>
+    <object>
+        <name>Test</name>
+        <path>/test1</path>
+        <path>/test2</path>
+        <iface>iface-test.xml</iface>
+    </object>
+</project>

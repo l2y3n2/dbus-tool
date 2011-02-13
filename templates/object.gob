@@ -1,0 +1,53 @@
+requires 2.0.14
+
+%h{
+#include <dbus/dbus-glib.h>
+
+enum {
+$$SIGNAL_LIST$$
+	$$OBJECT_U$$_N_SIGNALS,
+};
+%}
+
+%{
+#include "dbus-iface.h"
+#include "dbus-glue.h"
+#include "dbus-marshal.h"
+%}
+
+class $$OBJECT$$:Object from G:Object
+{
+	classwide guint signals[$$OBJECT_U$$_N_SIGNALS];
+
+	public const gchar *path;
+
+	class_init(klass)
+	{
+$$REGISTER_SIGNALS$$
+		dbus_g_object_type_install_info($$OBJECT_U$$_TYPE_OBJECT,
+				&dbus_glib_$$OBJECT_L$$_object_info);
+	}
+
+	public $$OBJECT$$Object * new(void)
+	{
+		return GET_NEW;
+	}
+
+	public void register(self, DBusGConnection *bus, const gchar *path)
+	{
+		self->path = g_strdup(path);
+		dbus_g_connection_register_g_object(bus, path, G_OBJECT(self));
+	}
+}
+
+%h{
+gboolean $$OBJECT_L$$_init(DBusGConnection *bus);
+%}
+
+%{
+gboolean $$OBJECT_L$$_init(DBusGConnection *bus)
+{
+$$REGISTER_OBJECTS$$
+	return TRUE;
+}
+%}

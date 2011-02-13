@@ -1,0 +1,9 @@
+SUBDIRS = $$SUBDIRS$$
+
+servicedir = $(datadir)/dbus-1/services
+service_DATA = $$SERVICE$$.service
+
+bin_PROGRAMS = $$PACKAGE$$-daemon
+$$PACKAGE$$_daemon_SOURCES = main.c
+$$PACKAGE$$_daemon_CFLAGS = @DBUS_GLIB_CFLAGS@ -Wall -Werror
+$$PACKAGE$$_daemon_LDADD = @DBUS_GLIB_LIBS@ $$OBJECT_LIBS$$

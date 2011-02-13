@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=$$SERVICE$$
+Exec=@prefix@/bin/$$PACKAGE$$-daemon
+User=root

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node>
+    <interface name="Test.Hello">
+        <annotation name="org.freedesktop.DBus.GLib.CSymbol"
+            value="test_hello" />
+        <method name="EmitHello">
+            <arg name="message" type="s" direction="in" />
+        </method>
+        <signal name="Hello">
+            <arg name="message" type="s" direction="out" />
+        </signal>
+        <signal name="Hello1">
+        </signal>
+        <signal name="Hello2">
+            <arg name="num" type="i" direction="out" />
+            <arg name="message" type="s" direction="out" />
+        </signal>
+    </interface>
+    <interface name="Test.HelloWorld">
+        <annotation name="org.freedesktop.DBus.GLib.CSymbol"
+            value="test_hello_world" />
+        <method name="Comp">
+            <arg name="message" type="as" direction="in" />
+            <arg name="rep" type="ay" direction="out" />
+        </method>
+    </interface>
+</node>
