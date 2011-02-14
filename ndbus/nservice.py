@@ -64,6 +64,8 @@ class NService(object):
         patterns['OBJECT_LIBS'] = ' '.join(
                 ['{0}/lib{0}.la'.format(obj.name.lower())
                     for obj in self.objects])
+        patterns['REGISTER_OBJECTS'] = '\n'.join(
+                [obj.reg_objs for obj in self.objects])
 
         parse_file(patterns, indir, outdir, 'configure.ac')
         parse_file(patterns, indir, outdir, 'main.c')

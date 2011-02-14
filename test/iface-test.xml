@@ -24,5 +24,10 @@
             <arg name="message" type="as" direction="in" />
             <arg name="rep" type="ay" direction="out" />
         </method>
+        <method name="AsyncTest">
+            <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+            <arg name="message" type="s" direction="in" />
+            <arg name="reply" type="s" direction="out" />
+        </method>
     </interface>
 </node>

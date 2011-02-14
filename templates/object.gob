@@ -2,6 +2,7 @@ requires 2.0.14
 
 %h{
 #include <dbus/dbus-glib.h>
+#include <dbus/dbus-glib-lowlevel.h>
 
 enum {
 $$SIGNAL_LIST$$
@@ -19,6 +20,8 @@ class $$OBJECT$$:Object from G:Object
 {
 	classwide guint signals[$$OBJECT_U$$_N_SIGNALS];
 
+	public DBusGConnection *bus;
+	public GQuark domain;
 	public const gchar *path;
 
 	class_init(klass)
@@ -35,19 +38,9 @@ $$REGISTER_SIGNALS$$
 
 	public void register(self, DBusGConnection *bus, const gchar *path)
 	{
-		self->path = g_strdup(path);
+		self->bus = bus;
+		self->path = path;
+		self->domain = g_quark_from_string("$$OBJECT$$");
 		dbus_g_connection_register_g_object(bus, path, G_OBJECT(self));
 	}
 }
-
-%h{
-gboolean $$OBJECT_L$$_init(DBusGConnection *bus);
-%}
-
-%{
-gboolean $$OBJECT_L$$_init(DBusGConnection *bus)
-{
-$$REGISTER_OBJECTS$$
-	return TRUE;
-}
-%}

@@ -10,11 +10,16 @@ import xml.etree.ElementTree as etree
 from .niface import NIFace
 from .nutils import parse_code, parse_file
 
-REGISTER_OBJECT_HEADER = '\t$$OBJECT$$Object *tmp;\n'
+REGISTER_OBJECT_HEADER = """
+void $$OBJECT_L$$_init(DBusGConnection *bus)
+{
+\t$$OBJECT$$Object *tmp;
+"""
 REGISTER_OBJECT = """
 \ttmp = $$OBJECT_L$$_object_new();
 \t$$OBJECT_L$$_object_register(tmp, bus, "{0}");
 """
+REGISTER_OBJECT_TAIL = '}\n'
 
 DOC_HEAD = """
 <table border="1">
@@ -34,6 +39,7 @@ class NObject(object):
         self.reg_objs = REGISTER_OBJECT_HEADER
         self.reg_objs += ''.join(
                 [REGISTER_OBJECT.format(path) for path in self.paths])
+        self.reg_objs += REGISTER_OBJECT_TAIL
 
         self.filename = os.path.join(basepath, obj.find('iface').text)
         root = etree.parse(self.filename).getroot()
@@ -48,10 +54,10 @@ class NObject(object):
         os.mkdir(outdir)
 
         patterns['OBJECT'] = self.name
+        self.reg_objs = parse_code(patterns, self.reg_objs)
         for iface in self.ifaces:
             iface.gencode(patterns.copy(), indir, outdir)
 
-        patterns['REGISTER_OBJECTS'] = parse_code(patterns, self.reg_objs)
         patterns['SIGNAL_LIST'] = ''
         patterns['REGISTER_SIGNALS'] = ''
         patterns['IFACE_FILES'] = ' '.join(

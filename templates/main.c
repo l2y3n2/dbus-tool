@@ -3,6 +3,8 @@ $$OBJECT_HEADERS$$
 
 static DBusGConnection *bus;
 
+$$REGISTER_OBJECTS$$
+
 int main(int argc, const char *argv[])
 {
 	GMainLoop *mainloop;

@@ -15,7 +15,7 @@ FUNCCODE = """
 \t$$OBJECT$$ObjectClass *klass;
 
 \tklass = $$OBJECT_U$$_OBJECT_GET_CLASS(obj);
-\tg_signal_emit(obj, klass->signals[{0}], 0{1});
+\tg_signal_emit(obj, klass->signals[{0}], obj->domain{1});
 """
 REGCODE = """
 \tklass->signals[{0}] = g_signal_new("{1}",

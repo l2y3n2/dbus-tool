@@ -11,11 +11,21 @@ from .nutils import parse_name, parse_code
 FUNCDEF = 'gboolean {0}($$OBJECT$$Object *obj{1}, GError **error)'
 FUNCCODE = """
 {
-\tg_set_error(error, 0, 0, "not implemented yet");
+\tg_set_error(error, obj->domain, 0, "not implemented yet");
 
 \treturn FALSE;
 }
 
+"""
+FUNCDEFA = 'void {0}($$OBJECT$$Object *obj{1}, DBusGMethodInvocation *context)'
+FUNCCODEA = """
+{
+\tGError *error;
+
+\terror = g_error_new(obj->domain, 0, "not implemented yet");
+\tdbus_g_method_return_error(context, error);
+\tg_error_free(error);
+}
 """
 
 DOC = '<tr><td rowspan={0}>{1}</td><td colspan=3></td></tr>\n'
@@ -31,12 +41,20 @@ class NMethod(object):
         for anode in mnode.findall('arg'):
             self.args.append(NMethodArg(anode))
 
-        self.proto = FUNCDEF
-        self.code = FUNCCODE
-        if mnode.find('annotation'):
-            self.prefix = mnode.find('annotation').attrib['value']
+        self.prefix = None
+        self.async = False
+        for anno in mnode.findall('annotation'):
+            if anno.attrib['name'] == 'org.freedesktop.DBus.GLib.CSymbol':
+                self.prefix = anno.attrib['value']
+            if anno.attrib['name'] == 'org.freedesktop.DBus.GLib.Async':
+                self.async = True
+
+        if self.async:
+            self.proto = FUNCDEFA
+            self.code = FUNCCODEA
         else:
-            self.prefix = None
+            self.proto = FUNCDEF
+            self.code = FUNCCODE
 
     def gencode(self, patterns, indir, outdir):
         """docstring for gencode"""
@@ -46,7 +64,11 @@ class NMethod(object):
         if not self.prefix:
             self.prefix = '$$IFACE_SYMBOL_L$$_' + parse_name(self.name, '_')
 
-        args_code = ', '.join([arg.code for arg in self.args])
+        if self.async:
+            args_code = ', '.join(
+                    [arg.code for arg in self.args if arg.direction == 'in'])
+        else:
+            args_code = ', '.join([arg.code for arg in self.args])
         if args_code:
             args_code = ', ' + args_code
 
